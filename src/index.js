@@ -1,16 +1,9 @@
-import englishWordlist from "../util/english.json";
 import crypto from "crypto";
-import {
-    fromBitArray,
-    bytesToBits,
-    bitsToBytes,
-    lpad,
-    chunk
-} from "./convert";
+import { fromBitArray, bytesToBits, bitsToBytes, lpad, chunk } from "./convert";
 
 async function sha256(bytes) {
     if (typeof window !== "undefined") {
-        const h = await window.crypto.subtle.digest("SHA-256", bytes)
+        const h = await window.crypto.subtle.digest("SHA-256", bytes);
         return new Uint8Array(h);
     } else {
         const hash = crypto.createHash("sha256");
@@ -19,33 +12,15 @@ async function sha256(bytes) {
     }
 }
 
-function getWordList(maybeWordlist) {
-    if (typeof maybeWordlist === "string") {
-        if (maybeWordlist.toLowerCase() === "english") {
-            return englishWordlist;
-        }
-        throw new Error(`Word list ${maybeWordlist} not supported`);
-    }
-    if (Array.isArray(maybeWordlist)) {
-        return maybeWordlist;
-    }
-    throw new Error(
-        `Word list must be either string or array, is ${typeof maybeWordlist}`
-    );
-}
-
-export async function mnemonicToBytes(mnemonic, wordlist) {
-    wordlist = getWordList(wordlist);
-
+export async function mnemonicToBytes(mnemonic, reverselist) {
     const words = Array.isArray(mnemonic) ? mnemonic : mnemonic.split(" ");
-    // TODO this block stinks
-    const idxs = words.map(w => wordlist.findIndex(el => w === el));
-    const idx_bits = idxs
+    // TODO can we make this more efficient?
+    const concat = words
+        .map(w => reverselist[w])
         .map(idx => idx.toString(2).split(""))
         .map(bits => bits.map(b => parseInt(b, 2)))
-        .map(bits => lpad(bits, 11));
-    // END stinking block
-    const concat = idx_bits.reduce((a, b) => [...a, ...b], []);
+        .map(bits => lpad(bits, 11))
+        .reduce((a, b) => [...a, ...b], []);
     const drop = Math.round(concat.length / 32);
     const bits = concat.slice(0, concat.length - drop);
     // TODO not validating checksum
@@ -53,9 +28,9 @@ export async function mnemonicToBytes(mnemonic, wordlist) {
 }
 
 export async function bytesToMnemonic(entropy, wordlist) {
-    wordlist = getWordList(wordlist);
     const bits = bytesToBits(entropy);
     const len = bits.length;
+
     // Entropy has to be multiple of 32 bits
     if (len % 32 !== 0) {
         throw new Error(
@@ -68,6 +43,7 @@ export async function bytesToMnemonic(entropy, wordlist) {
     const checksum = bytesToBits(sha).slice(0, len / 32);
 
     // Generate mnemonic
-    return chunk([...bits, ...checksum], 11)
-        .map(idx_bits => wordlist[fromBitArray(idx_bits)]);
+    return chunk([...bits, ...checksum], 11).map(
+        idx_bits => wordlist[fromBitArray(idx_bits)]
+    );
 }

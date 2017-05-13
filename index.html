@@ -1,17 +1,28 @@
 <head>
   <title>testpage</title>
   <script src="https://unpkg.com/babel-polyfill@6.23.0/dist/polyfill.js"></script>
-  <script src="./dist/bip39.js"></script>
+  <script src="dist/main.js"></script>
   <script>
   const {bip39} = window;
-  const s = Date.now()
   const expected = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
   const bytes = Uint8Array.from(new Array(16).fill(0))
-  bip39.bytesToMnemonic(bytes, 'english').then(m => {
-    console.log(bytes, m)
-    console.log(m.length, expected.split(" ").length)
-    console.log(m.join(" ")===expected, Date.now() - s)
-  })
+  fetch('dist/english.json').then(r => r.json()).then(english => {
+    const s = Date.now()
+    bip39.bytesToMnemonic(bytes, english).then(m => {
+      const e = Date.now()
+      console.log("e->m:", m)
+      console.log(m.length, expected.split(" ").length)
+      console.log(m.join(" ")===expected, e - s)
+    })
+  });
+  fetch('dist/english.reverse.json').then(r => r.json()).then(reverse => {
+    const s = Date.now()
+    const mnemonic = ["abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "about"]
+    bip39.mnemonicToBytes(mnemonic, reverse).then(b => {
+      const e = Date.now()
+      console.log("m->e:", b)
+    })
+  });
   </script>
 </head>
 <body>
