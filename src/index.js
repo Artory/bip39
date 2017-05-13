@@ -1,22 +1,21 @@
 import englishWordlist from "../util/english.json";
-import chunk from "lodash.chunk";
 import crypto from "crypto";
 import {
-    bitsToDecimal,
+    fromBitArray,
     bytesToBits,
     bitsToBytes,
-    hexToBits,
-    lpad
-} from "../util/convert";
+    lpad,
+    chunk
+} from "./convert";
 
 async function sha256(bytes) {
     if (typeof window !== "undefined") {
         const h = await window.crypto.subtle.digest("SHA-256", bytes)
-        return bytesToBits(new Uint8Array(h));
+        return new Uint8Array(h);
     } else {
         const hash = crypto.createHash("sha256");
         hash.update(bytes);
-        return hexToBits(hash.digest("hex"));
+        return hash.digest();
     }
 }
 
@@ -66,9 +65,9 @@ export async function bytesToMnemonic(entropy, wordlist) {
 
     // Generate checksum in bits
     const sha = await sha256(entropy);
-    const checksum = sha.slice(0, len / 32);
+    const checksum = bytesToBits(sha).slice(0, len / 32);
 
     // Generate mnemonic
     return chunk([...bits, ...checksum], 11)
-        .map(idx_bits => wordlist[bitsToDecimal(idx_bits)]);
+        .map(idx_bits => wordlist[fromBitArray(idx_bits)]);
 }

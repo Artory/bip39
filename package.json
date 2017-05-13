@@ -23,8 +23,5 @@
     "eslint": "^3.19.0",
     "mocha": "^3.3.0",
     "webpack": "^2.5.1"
-  },
-  "dependencies": {
-    "lodash.chunk": "^4.2.0"
   }
 }

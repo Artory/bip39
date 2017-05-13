@@ -3,7 +3,7 @@ const BabiliPlugin = require("babili-webpack-plugin");
 
 module.exports = {
     target: "web",
-    entry: ["babel-polyfill", "./src/index.js"],
+    entry: ["./src/index.js"],
     output: {
         filename: "bip39.js",
         path: __dirname + "/dist",

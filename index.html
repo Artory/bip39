@@ -1,14 +1,16 @@
 <head>
   <title>testpage</title>
+  <script src="https://unpkg.com/babel-polyfill@6.23.0/dist/polyfill.js"></script>
   <script src="./dist/bip39.js"></script>
   <script>
   const {bip39} = window;
   const s = Date.now()
   const expected = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
-  bip39.entropyToMnemonic('00000000000000000000000000000000', 'english').then(m => {
-    console.log(m.split(" ").length, expected.split(" ").length)
-    console.log(m)
-    console.log(m===expected, Date.now() - s)
+  const bytes = Uint8Array.from(new Array(16).fill(0))
+  bip39.bytesToMnemonic(bytes, 'english').then(m => {
+    console.log(bytes, m)
+    console.log(m.length, expected.split(" ").length)
+    console.log(m.join(" ")===expected, Date.now() - s)
   })
   </script>
 </head>
