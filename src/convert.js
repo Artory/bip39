@@ -9,7 +9,7 @@ export function chunk(array, size = 1) {
     return r;
 }
 
-export function typedArrayEquals(a1, a2) {
+export function arrayEquals(a1, a2) {
     if (a1.length !== a2.length) {
         return false;
     }
@@ -41,7 +41,7 @@ export function toBitArray(b, length = 8) {
             result.push(0);
         }
     }
-    return Uint8Array.from(result);
+    return result;
 }
 
 export function fromBitArray(bits) {
@@ -58,7 +58,7 @@ function nextMultiple(x, n = 8) {
 
 export function bitsToBytes(bits) {
     bits = lpad(bits, nextMultiple(bits.length, 8));
-    return Uint8Array.from(chunk(bits, 8).map(bits => fromBitArray(bits)));
+    return chunk(bits, 8).map(bits => fromBitArray(bits));
 }
 
 export function bytesToBits(bs) {
@@ -66,5 +66,5 @@ export function bytesToBits(bs) {
     for (const b of bs) {
         r.push.apply(r, toBitArray(b, 8));
     }
-    return Uint8Array.from(r);
+    return r
 }

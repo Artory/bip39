@@ -13,7 +13,7 @@
       console.log("e->m:", m, e - s)
     })
   });
-  fetch('dist/english.json').then(r => r.json()).then(reverse => {
+  fetch('dist/english.reverse.json').then(r => r.json()).then(reverse => {
     const s = Date.now()
     const mnemonic = ["abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "about"]
     bip39.mnemonicToBytes(mnemonic, reverse).then(b => {

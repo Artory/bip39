@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha --require babel-polyfill --compilers js:babel-register",
+    "bench": "npm run dist && node benchmark/benchmark.js",
     "dist": "webpack"
   },
   "keywords": [
@@ -13,6 +14,7 @@
   "author": "Nikolaus Piccolotto <nikolaus.piccolotto@artory.com>",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-plugin-transform-regenerator": "^6.24.1",
@@ -21,6 +23,7 @@
     "babel-preset-es2017": "^6.24.1",
     "babel-register": "^6.24.1",
     "babili-webpack-plugin": "^0.0.11",
+    "benchmark": "^2.1.4",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "file-loader": "^0.11.1",
