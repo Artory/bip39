@@ -11,12 +11,10 @@ Implementation of a BIP39 subset that works in Node.js and modern browsers. WORK
 
 * Unpublished
 * Most probably inefficient
-* `mnemonicToBytes` doesn't validate the checksum
 * Missing seed support
 * Does not work in browsers without web crypto API
 
 ## TODO
 
-* Complete code (at least checksum validation)
 * Add benchmark, make more efficient
 * Publish package and benchmark numbers

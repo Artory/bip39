@@ -1,21 +1,9 @@
 import { expect } from "chai";
 import vectors from "./vectors.json";
-import { chunk } from "../src/convert";
+import { chunk, typedArrayEquals } from "../src/convert";
 import { mnemonicToBytes, bytesToMnemonic } from "../src/index";
 import english from "../util/english.json";
 import reverse from "../util/english.reverse.json";
-
-function typedArrayEquals(a1, a2) {
-    if (a1.length !== a2.length) {
-        return false;
-    }
-    for (let i = 0; i < a1.length; i++) {
-        if (a1[i] !== a2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
 
 function hexToBytes(k) {
     const bytes = chunk(k.split(""), 2)
@@ -23,6 +11,17 @@ function hexToBytes(k) {
         .map(bytes => parseInt(bytes, 16));
     return Uint8Array.from(bytes);
 }
+
+describe("mnemonicToBytes", () => {
+    it("validates checksum", done => {
+        const mnemonic = "abandon abandon abandon about";
+        mnemonicToBytes(mnemonic, reverse)
+            .then(() =>
+                done("Expected mnemonicToBytes to throw on invalid mnemonic")
+            )
+            .catch(() => done());
+    });
+});
 
 describe("test vectors", () => {
     describe("english", () => {

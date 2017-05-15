@@ -1,5 +1,12 @@
 import crypto from "crypto";
-import { fromBitArray, bytesToBits, bitsToBytes, lpad, chunk } from "./convert";
+import {
+    fromBitArray,
+    bytesToBits,
+    bitsToBytes,
+    lpad,
+    chunk,
+    typedArrayEquals
+} from "./convert";
 
 async function sha256(bytes) {
     if (typeof window !== "undefined") {
@@ -23,7 +30,17 @@ export async function mnemonicToBytes(mnemonic, reverselist) {
         .reduce((a, b) => [...a, ...b], []);
     const drop = Math.round(concat.length / 32);
     const bits = concat.slice(0, concat.length - drop);
-    // TODO not validating checksum
+
+    // Validate checksum
+    const sha = await sha256(bitsToBytes(bits));
+    const expectedChecksum = bytesToBits(sha).slice(0, concat.length / 32);
+    const checksum = concat.slice(concat.length - drop);
+    if (!typedArrayEquals(expectedChecksum, checksum)) {
+        throw new Error(
+            `Invalid mnemonic (expected checksum ${expectedChecksum}, but was ${checksum})`
+        );
+    }
+
     return bitsToBytes(bits);
 }
 

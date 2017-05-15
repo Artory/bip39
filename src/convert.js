@@ -3,10 +3,22 @@ export function chunk(array, size = 1) {
     let i = 0;
     const r = [];
     while (i < l) {
-        r.push(array.slice(i, i+size));
+        r.push(array.slice(i, i + size));
         i += size;
     }
     return r;
+}
+
+export function typedArrayEquals(a1, a2) {
+    if (a1.length !== a2.length) {
+        return false;
+    }
+    for (let i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 export function lpad(a, maxlength = 8) {
@@ -33,10 +45,6 @@ export function toBitArray(b, length = 8) {
 }
 
 export function fromBitArray(bits) {
-    return bits.reduce((r, b, i) => r + b * 2 ** (bits.length - i - 1), 0);
-}
-
-export function bitsToDecimal(bits) {
     return bits.reduce((r, b, i) => r + b * 2 ** (bits.length - i - 1), 0);
 }
 
